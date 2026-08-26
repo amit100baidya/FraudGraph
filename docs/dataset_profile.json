@@ -1,0 +1,89 @@
+{
+  "dataset_name": "PaySim Synthetic Financial Fraud Dataset",
+  "file_path": "C:\\Users\\amitb\\Desktop\\Razor Pay\\Dataset A \u2014 PaySim.csv",
+  "num_rows": 6362620,
+  "num_columns": 11,
+  "columns": [
+    "step",
+    "type",
+    "amount",
+    "nameOrig",
+    "oldbalanceOrg",
+    "newbalanceOrig",
+    "nameDest",
+    "oldbalanceDest",
+    "newbalanceDest",
+    "isFraud",
+    "isFlaggedFraud"
+  ],
+  "data_types": {
+    "step": "int64",
+    "type": "object",
+    "amount": "float64",
+    "nameOrig": "object",
+    "oldbalanceOrg": "float64",
+    "newbalanceOrig": "float64",
+    "nameDest": "object",
+    "oldbalanceDest": "float64",
+    "newbalanceDest": "float64",
+    "isFraud": "int64",
+    "isFlaggedFraud": "int64"
+  },
+  "missing_values": {
+    "step": 0,
+    "type": 0,
+    "amount": 0,
+    "nameOrig": 0,
+    "oldbalanceOrg": 0,
+    "newbalanceOrig": 0,
+    "nameDest": 0,
+    "oldbalanceDest": 0,
+    "newbalanceDest": 0,
+    "isFraud": 0,
+    "isFlaggedFraud": 0
+  },
+  "duplicate_rows": 0,
+  "fraud_summary": {
+    "total_transactions": 6362620,
+    "fraud_count": 8213,
+    "non_fraud_count": 6354407,
+    "fraud_percentage": 0.1291,
+    "is_flagged_fraud_count": 16
+  },
+  "transaction_types": {
+    "CASH_OUT": 2237500,
+    "PAYMENT": 2151495,
+    "CASH_IN": 1399284,
+    "TRANSFER": 532909,
+    "DEBIT": 41432
+  },
+  "type_fraud_breakdown": {
+    "CASH_IN_fraud_0": 1399284,
+    "CASH_OUT_fraud_0": 2233384,
+    "CASH_OUT_fraud_1": 4116,
+    "DEBIT_fraud_0": 41432,
+    "PAYMENT_fraud_0": 2151495,
+    "TRANSFER_fraud_0": 528812,
+    "TRANSFER_fraud_1": 4097
+  },
+  "time_range": {
+    "min_step": 1,
+    "max_step": 743,
+    "total_steps": 743,
+    "estimated_days": 30.96
+  },
+  "amount_stats": {
+    "min": 0.0,
+    "max": 92445516.64,
+    "mean": 179861.9
+  },
+  "graph_entities": {
+    "unique_source_accounts": 6353307,
+    "unique_dest_accounts": 2722362,
+    "total_unique_accounts": 9073900,
+    "merchant_destinations": 2151495,
+    "customer_destinations": 4211125,
+    "accounts_both_orig_and_dest": 1769
+  },
+  "elapsed_seconds": 25.16
+}

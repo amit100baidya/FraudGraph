@@ -1,0 +1,71 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Node / React
+frontend/node_modules/
+frontend/dist/
+frontend/.nx/
+frontend/.cache/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Databases & Local Storage
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment & Secrets
+.env
+*.pem
+
+# Machine Learning Models & Large Artifacts
+*.joblib
+*.pkl
+*.onnx
+ml/models/*.joblib
+ml/models/*.pkl
+
+# PaySim Datasets & Raw/Processed Data Files
+Dataset A — PaySim.csv
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# IDEs & System
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
