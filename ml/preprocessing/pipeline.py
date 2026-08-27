@@ -24,13 +24,8 @@ class PaySimPipeline:
             raise FileNotFoundError(f"PaySim dataset not found at {self.raw_csv_path}")
         df = pd.read_csv(self.raw_csv_path, nrows=nrows)
         self.validate_schema(df)
-        
-        # Ensure heterogeneous entity columns exist
-        if "device_id" not in df.columns or "ip_address" not in df.columns or "card_id" not in df.columns:
-            from scripts.generate_synthetic_graph import generate_synthetic_entities
-            df = generate_synthetic_entities(df)
-            
         return df
+
 
 
     def validate_schema(self, df: pd.DataFrame) -> bool:

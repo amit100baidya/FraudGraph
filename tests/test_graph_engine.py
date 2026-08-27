@@ -9,21 +9,21 @@ from ai.analyst import AIFraudAnalyst
 @pytest.fixture
 def sample_df():
     data = [
-        {"step": 1, "type": "TRANSFER", "amount": 50000.0, "nameOrig": "C1001", "oldbalanceOrg": 50000.0, "newbalanceOrig": 0.0, "nameDest": "C2001", "oldbalanceDest": 0.0, "newbalanceDest": 50000.0, "isFraud": 1, "device_id": "DEV_RING_1", "ip_address": "10.0.0.1", "card_id": "CARD_1"},
-        {"step": 1, "type": "CASH_OUT", "amount": 50000.0, "nameOrig": "C2001", "oldbalanceOrg": 50000.0, "newbalanceOrig": 0.0, "nameDest": "M9001", "oldbalanceDest": 0.0, "newbalanceDest": 0.0, "isFraud": 1, "device_id": "DEV_RING_1", "ip_address": "10.0.0.1", "card_id": "CARD_2"},
-        {"step": 2, "type": "PAYMENT", "amount": 100.0, "nameOrig": "C3001", "oldbalanceOrg": 500.0, "newbalanceOrig": 400.0, "nameDest": "M9002", "oldbalanceDest": 0.0, "newbalanceDest": 0.0, "isFraud": 0, "device_id": "DEV_NORMAL_1", "ip_address": "192.168.1.5", "card_id": "CARD_3"}
+        {"step": 1, "type": "TRANSFER", "amount": 50000.0, "nameOrig": "C1001", "oldbalanceOrg": 50000.0, "newbalanceOrig": 0.0, "nameDest": "C2001", "oldbalanceDest": 0.0, "newbalanceDest": 50000.0, "isFraud": 1},
+        {"step": 1, "type": "CASH_OUT", "amount": 50000.0, "nameOrig": "C2001", "oldbalanceOrg": 50000.0, "newbalanceOrig": 0.0, "nameDest": "M9001", "oldbalanceDest": 0.0, "newbalanceDest": 0.0, "isFraud": 1},
+        {"step": 2, "type": "PAYMENT", "amount": 100.0, "nameOrig": "C3001", "oldbalanceOrg": 500.0, "newbalanceOrig": 400.0, "nameDest": "M9002", "oldbalanceDest": 0.0, "newbalanceDest": 0.0, "isFraud": 0}
     ]
     return pd.DataFrame(data)
 
-def test_heterogeneous_graph_building(sample_df):
+def test_paysim_account_graph_building(sample_df):
     engine = HeterogeneousGraphEngine()
     g = engine.build_graph_from_dataframe(sample_df)
     assert len(g.nodes()) > 0
-    assert engine.node_types.get("C1001") == "USER"
-    assert engine.node_types.get("DEV_RING_1") == "DEVICE"
+    assert engine.node_types.get("C1001") == "ACCOUNT"
+    assert engine.node_types.get("TX_0") == "TRANSACTION"
 
-    score_data = engine.get_entity_graph_score("DEV_RING_1")
-    assert score_data["shared_users_count"] >= 2
+    score_data = engine.get_entity_graph_score("C1001")
+    assert score_data["total_degree"] >= 1
     assert score_data["graph_risk_score"] > 0
 
 def test_subgraph_cytoscape_export(sample_df):
@@ -66,7 +66,7 @@ def test_evidence_and_ai_analyst(sample_df):
         step=1,
         risk_fusion_result=risk_res,
         shap_contributions=[{"feature": "error_balance_orig", "shap_value": 0.45, "feature_value": 0.0, "impact": "INCREASES_RISK"}],
-        graph_metrics={"shared_users_count": 2, "neighbor_fraud_ratio": 0.5, "graph_risk_score": 75.0}
+        graph_metrics={"total_degree": 4, "unique_counterparties": 2, "graph_risk_score": 75.0}
     )
 
     analyst = AIFraudAnalyst()

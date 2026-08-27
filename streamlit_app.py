@@ -138,7 +138,7 @@ if navigation == "📊 Security Overview":
     # Filterable Stream Table
     search_col, type_col = st.columns([2, 1])
     with search_col:
-        search_query = st.text_input("Search User ID, Device, or IP:", "")
+        search_query = st.text_input("Search Account ID (Source / Destination):", "")
     with type_col:
         selected_type = st.selectbox("Transaction Type:", ["ALL", "TRANSFER", "CASH_OUT", "PAYMENT", "CASH_IN"])
 
@@ -148,15 +148,15 @@ if navigation == "📊 Security Overview":
     if search_query:
         mask = (
             filtered_df["nameOrig"].astype(str).str.contains(search_query, case=False) |
-            filtered_df["nameDest"].astype(str).str.contains(search_query, case=False) |
-            filtered_df["device_id"].astype(str).str.contains(search_query, case=False)
+            filtered_df["nameDest"].astype(str).str.contains(search_query, case=False)
         )
         filtered_df = filtered_df[mask]
 
     st.dataframe(
-        filtered_df[["step", "type", "amount", "nameOrig", "nameDest", "device_id", "ip_address", "isFraud"]].head(50),
+        filtered_df[["step", "type", "amount", "nameOrig", "nameDest", "oldbalanceOrg", "newbalanceOrig", "isFraud"]].head(50),
         use_container_width=True
     )
+
 
 
 # PAGE 2: REAL-TIME TRANSACTIONS EVALUATOR

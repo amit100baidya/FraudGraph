@@ -1,7 +1,7 @@
 export type RiskLevel = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
 export type InvestigationStatus = 'NEW' | 'INVESTIGATING' | 'REVIEWED' | 'CONFIRMED';
-export type TransactionType = 'TRANSFER' | 'PAYMENT' | 'CASH_OUT' | 'DEBIT' | 'DEPOSIT';
-export type EntityType = 'USER' | 'MERCHANT' | 'DEVICE' | 'IP' | 'CARD' | 'BANK_ACCOUNT';
+export type TransactionType = 'TRANSFER' | 'PAYMENT' | 'CASH_OUT' | 'DEBIT' | 'CASH_IN';
+export type EntityType = 'ACCOUNT' | 'TRANSACTION';
 
 export interface Entity {
   id: string;
@@ -32,15 +32,13 @@ export interface Transaction {
   riskLevel: RiskLevel;
   riskScore: number;
   status: InvestigationStatus;
-  location?: string;
-  ipAddress?: string;
-  deviceId?: string;
   evidenceSummary?: {
     mlScore: number;
     behavioralFlags: string[];
     graphFlags: string[];
   };
 }
+
 
 export interface GraphNode {
   id: string;

@@ -40,8 +40,6 @@ async def list_transactions(
             "amount": float(row["amount"]),
             "nameOrig": str(row["nameOrig"]),
             "nameDest": str(row["nameDest"]),
-            "device_id": str(row.get("device_id", "DEV_UNKNOWN")),
-            "ip_address": str(row.get("ip_address", "127.0.0.1")),
             "isFraud": int(row["isFraud"]),
             "isFlaggedFraud": int(row.get("isFlaggedFraud", 0))
         })
@@ -77,11 +75,9 @@ async def get_transaction(transaction_id: str):
         "nameDest": str(row["nameDest"]),
         "oldbalanceDest": float(row["oldbalanceDest"]),
         "newbalanceDest": float(row["newbalanceDest"]),
-        "device_id": str(row.get("device_id", "DEV_UNKNOWN")),
-        "ip_address": str(row.get("ip_address", "127.0.0.1")),
-        "card_id": str(row.get("card_id", "CARD_UNKNOWN")),
         "isFraud": int(row["isFraud"]),
         "isFlaggedFraud": int(row.get("isFlaggedFraud", 0))
     }
     return record
+
 

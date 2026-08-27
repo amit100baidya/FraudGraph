@@ -3,9 +3,9 @@ from typing import Dict, List, Any
 
 class EvidenceEngine:
     """
-    Evidence Engine for FraudGraph.
+    PaySim Evidence Engine for FraudGraph.
     Assembles traceable Evidence Objects mapping risk flags directly back to raw transactional,
-    SHAP, graph structural, and behavioral evidence paths.
+    SHAP attributions, graph structural metrics, and account behavioral patterns.
     """
 
     def compile_evidence(
@@ -26,26 +26,18 @@ class EvidenceEngine:
         # Build evidence paths
         evidence_paths = []
         
-        # 1. Structural device/IP sharing paths
-        shared_users = graph_metrics.get("shared_users_count", 0)
-        if shared_users > 1:
+        # 1. Structural Account Counterparty / Degree Fan-Out
+        unique_counterparties = graph_metrics.get("unique_counterparties", 0)
+        total_degree = graph_metrics.get("total_degree", 0)
+        if unique_counterparties > 3 or total_degree > 10:
             evidence_paths.append({
-                "type": "SHARED_ENTITY_LINK",
-                "severity": "HIGH" if shared_users > 3 else "MEDIUM",
-                "description": f"Account {orig_account} shares Device/IP resources with {shared_users - 1} other distinct customer accounts."
+                "type": "ACCOUNT_DEGREE_ANOMALY",
+                "severity": "HIGH" if unique_counterparties > 5 else "MEDIUM",
+                "description": f"Account {orig_account} exhibits unusual connectivity with {unique_counterparties} distinct counterparties and total transaction degree of {total_degree}."
             })
 
-        # 2. Fraud neighbor paths
-        fraud_ratio = graph_metrics.get("neighbor_fraud_ratio", 0.0)
-        if fraud_ratio > 0.0:
-            evidence_paths.append({
-                "type": "FRAUD_NEIGHBOR_EXPOSURE",
-                "severity": "CRITICAL" if fraud_ratio >= 0.5 else "HIGH",
-                "description": f"{round(fraud_ratio * 100, 1)}% of direct graph 2-hop neighbors have confirmed historical fraud flags."
-            })
-
-        # 3. Behavioral balance drain path
-        top_shap_features = [c["feature"] for c in shap_contributions[:3] if c["impact"] == "INCREASES_RISK"]
+        # 2. Behavioral balance drain path
+        top_shap_features = [c["feature"] for c in shap_contributions[:3] if c.get("impact") == "INCREASES_RISK"]
         if "is_zero_newbalance_orig" in top_shap_features or "error_balance_orig" in top_shap_features:
             evidence_paths.append({
                 "type": "BALANCE_DRAIN_ANOMALY",
@@ -53,12 +45,12 @@ class EvidenceEngine:
                 "description": f"Source account balance was completely zeroed out following high-risk {tx_type} transaction."
             })
 
-        # 4. Ring membership path
+        # 3. Coordinated Account Cluster membership path
         if cluster_info and cluster_info.get("suspicion_score", 0) > 50.0:
             evidence_paths.append({
                 "type": "COORDINATED_RING_MEMBERSHIP",
                 "severity": "CRITICAL",
-                "description": f"Part of detected suspicious cluster {cluster_info.get('cluster_id')} with ring suspicion score {cluster_info.get('suspicion_score')}/100."
+                "description": f"Part of detected suspicious account cluster {cluster_info.get('cluster_id')} with suspicion score {cluster_info.get('suspicion_score')}/100."
             })
 
         evidence_object = {

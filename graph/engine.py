@@ -6,9 +6,12 @@ from typing import Dict, List, Any, Set, Tuple
 
 class HeterogeneousGraphEngine:
     """
-    Graph Intelligence Engine for FraudGraph.
-    Builds a heterogeneous NetworkX graph containing Users, Devices, IPs, Cards, and Merchants.
-    Computes graph structural metrics, degree anomalies, shared entity links, and neighbor fraud ratios.
+    PaySim Graph Intelligence Engine for FraudGraph.
+    Builds an Account-to-Account multi-directed graph representing:
+    Source Account (nameOrig) -> Transaction -> Destination Account (nameDest).
+
+    Computes leakage-safe graph structural metrics (degrees, unique counterparties,
+    transaction velocity) strictly using attributes present in PaySim.
     """
 
     def __init__(self):
@@ -18,7 +21,8 @@ class HeterogeneousGraphEngine:
 
     def build_graph_from_dataframe(self, df: pd.DataFrame) -> nx.MultiDiGraph:
         """
-        Populates heterogeneous multi-directed graph from transaction DataFrame.
+        Populates directed transaction graph from PaySim DataFrame.
+        Graph structure: Account (nameOrig) -> Transaction -> Account (nameDest).
         """
         self.graph.clear()
         self.node_types.clear()
@@ -28,36 +32,25 @@ class HeterogeneousGraphEngine:
             tx_id = f"TX_{idx}"
             orig_id = str(row["nameOrig"])
             dest_id = str(row["nameDest"])
-            device_id = str(row.get("device_id", "DEV_UNKNOWN"))
-            ip_id = str(row.get("ip_address", "127.0.0.1"))
-            card_id = str(row.get("card_id", "CARD_UNKNOWN"))
             is_fraud = int(row.get("isFraud", 0))
 
-            # Register Nodes
-            self._add_node(orig_id, "USER")
-            self._add_node(dest_id, "MERCHANT" if dest_id.startswith("M") else "USER")
+            # Register Nodes (PaySim native entities: ACCOUNT and TRANSACTION)
+            self._add_node(orig_id, "ACCOUNT")
+            self._add_node(dest_id, "ACCOUNT")
             self._add_node(tx_id, "TRANSACTION")
-            self._add_node(device_id, "DEVICE")
-            self._add_node(ip_id, "IP")
-            self._add_node(card_id, "CARD")
 
             if is_fraud:
                 self.fraud_labels[orig_id] = 1
+                self.fraud_labels[dest_id] = 1
                 self.fraud_labels[tx_id] = 1
 
-            # Add Directed Edges
+            # Add Directed Edges: Orig -> TX -> Dest
             step = int(row.get("step", 0))
             amount = float(row.get("amount", 0.0))
             tx_type = str(row.get("type", "PAYMENT"))
 
-            # Transaction flow: Orig -> TX -> Dest
             self.graph.add_edge(orig_id, tx_id, key="INITIATED", step=step, amount=amount, tx_type=tx_type)
-            self.graph.add_edge(tx_id, dest_id, key="RECEIVED", step=step, amount=amount, tx_type=tx_type)
-
-            # Metadata linkages: Orig/TX -> Entities
-            self.graph.add_edge(orig_id, device_id, key="USED_DEVICE")
-            self.graph.add_edge(orig_id, ip_id, key="USED_IP")
-            self.graph.add_edge(orig_id, card_id, key="USED_CARD")
+            self.graph.add_edge(tx_id, dest_id, key="TRANSFER_TO", step=step, amount=amount, tx_type=tx_type)
 
         return self.graph
 
@@ -69,40 +62,48 @@ class HeterogeneousGraphEngine:
 
     def get_entity_graph_score(self, entity_id: str) -> Dict[str, Any]:
         """
-        Computes structural graph risk metrics for a given entity (User, Device, IP, Card).
+        Computes leakage-safe structural graph risk metrics for a given Account.
+        Does NOT rely on future target labels.
         """
         if not self.graph.has_node(entity_id):
             return {
                 "entity_id": entity_id,
-                "degree": 0,
-                "shared_users_count": 0,
-                "neighbor_fraud_ratio": 0.0,
+                "node_type": "ACCOUNT",
+                "in_degree": 0,
+                "out_degree": 0,
+                "total_degree": 0,
+                "unique_counterparties": 0,
                 "graph_risk_score": 0.0
             }
 
+        in_deg = self.graph.in_degree(entity_id)
+        out_deg = self.graph.out_degree(entity_id)
+        total_deg = self.graph.degree(entity_id)
+
+        # Find unique counterparties through transactions
         neighbors = list(self.graph.neighbors(entity_id)) + list(self.graph.predecessors(entity_id))
-        unique_neighbors = set(neighbors)
+        counterparties = set()
+        for nbr in neighbors:
+            if self.node_types.get(nbr) == "TRANSACTION":
+                sub_nbrs = list(self.graph.neighbors(nbr)) + list(self.graph.predecessors(nbr))
+                for s_nbr in sub_nbrs:
+                    if s_nbr != entity_id and self.node_types.get(s_nbr) == "ACCOUNT":
+                        counterparties.add(s_nbr)
 
-        # Count connected users
-        connected_users = [n for n in unique_neighbors if self.node_types.get(n) == "USER"]
-        shared_users_count = len(set(connected_users))
+        unique_counterparties = len(counterparties)
 
-        # Calculate neighbor fraud ratio
-        fraud_neighbors = sum(1 for n in unique_neighbors if self.fraud_labels.get(n, 0) == 1)
-        neighbor_fraud_ratio = fraud_neighbors / max(1, len(unique_neighbors))
-
-        # Compute graph risk score (0 - 100)
-        # Shared device/IP across multiple users + high neighbor fraud ratio raises risk
-        risk_from_sharing = min(1.0, max(0.0, (shared_users_count - 1) / 5.0)) * 40.0
-        risk_from_fraud_neighbors = neighbor_fraud_ratio * 60.0
-        graph_risk_score = round(risk_from_sharing + risk_from_fraud_neighbors, 2)
+        # Compute leakage-safe graph structural score (0 - 100) based on degree velocity & counterparty fan-out
+        degree_score = min(1.0, total_deg / 20.0) * 50.0
+        counterparty_score = min(1.0, unique_counterparties / 10.0) * 50.0
+        graph_risk_score = round(degree_score + counterparty_score, 2)
 
         return {
             "entity_id": entity_id,
-            "node_type": self.node_types.get(entity_id, "UNKNOWN"),
-            "degree": self.graph.degree(entity_id),
-            "shared_users_count": shared_users_count,
-            "neighbor_fraud_ratio": round(neighbor_fraud_ratio, 4),
+            "node_type": self.node_types.get(entity_id, "ACCOUNT"),
+            "in_degree": in_deg,
+            "out_degree": out_deg,
+            "total_degree": total_deg,
+            "unique_counterparties": unique_counterparties,
             "graph_risk_score": graph_risk_score
         }
 
@@ -129,7 +130,7 @@ class HeterogeneousGraphEngine:
 
         cytoscape_nodes = []
         for n in subG.nodes():
-            n_type = self.node_types.get(n, "UNKNOWN")
+            n_type = self.node_types.get(n, "ACCOUNT")
             is_fraud = self.fraud_labels.get(n, 0) == 1
             cytoscape_nodes.append({
                 "data": {

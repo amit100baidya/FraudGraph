@@ -81,8 +81,9 @@ export const mockOverviewAnalytics: OverviewAnalytics = {
 
 export const mockTargetEntity: Entity = {
   id: 'A10294',
-  name: 'Primary Node A10294',
-  type: 'BANK_ACCOUNT',
+  name: 'Primary Account C10294',
+  type: 'ACCOUNT',
+
   riskScore: 97,
   fraudProbability: 97.4,
   riskLevel: 'CRITICAL',
@@ -135,38 +136,34 @@ export const mockEvidenceItems: EvidenceItem[] = [
   {
     id: 'EV-04',
     code: 'relationship',
-    title: 'Relationship Anomaly',
+    title: 'Counterparty Anomaly',
     severity: 'HIGH',
-    description: 'Multiple accounts share suspicious transaction relationships, IP 192.168.1.104, and Device DEV-8819.',
+    description: 'Multiple accounts exhibit high-velocity transaction transfers with account A88421.',
     impactScore: 12,
-    highlightNodeIds: ['A10294', 'DEV-8819', 'IP-104'],
-    highlightEdgeIds: ['E5', 'E6']
+    highlightNodeIds: ['A10294', 'A88421', 'TXN-10291'],
+    highlightEdgeIds: ['E1', 'E2']
   }
 ];
 
 export const mockGraphData: NetworkGraphData = {
   targetId: 'A10294',
   nodes: [
-    { id: 'A10294', label: 'A10294 (Origin)', nodeType: 'BANK_ACCOUNT', riskLevel: 'CRITICAL', riskScore: 97, isFraud: true, isTarget: true, amount: 842000 },
-    { id: 'A88421', label: 'A88421 (Hub)', nodeType: 'BANK_ACCOUNT', riskLevel: 'HIGH', riskScore: 91, isFraud: true, amount: 72500 },
-    { id: 'A77192', label: 'A77192 (Recipient)', nodeType: 'BANK_ACCOUNT', riskLevel: 'HIGH', riskScore: 88, isFraud: true, amount: 48000 },
-    { id: 'A55192', label: 'A55192 (Mule)', nodeType: 'BANK_ACCOUNT', riskLevel: 'MEDIUM', riskScore: 76, isFraud: false, amount: 18500 },
-    { id: 'MERCH_901', label: 'PayMerchant X', nodeType: 'MERCHANT', riskLevel: 'HIGH', riskScore: 82, isFraud: true, amount: 120000 },
-    { id: 'DEV-8819', label: 'Device iPhone 15', nodeType: 'DEVICE', riskLevel: 'CRITICAL', riskScore: 95, isFraud: true },
-    { id: 'IP-104', label: 'IP 192.168.1.104', nodeType: 'IP', riskLevel: 'HIGH', riskScore: 89, isFraud: true },
-    { id: 'A33910', label: 'A33910 (Legit)', nodeType: 'BANK_ACCOUNT', riskLevel: 'LOW', riskScore: 12, isFraud: false, amount: 2500 },
-    { id: 'CARD-4412', label: 'Visa ****4412', nodeType: 'CARD', riskLevel: 'MEDIUM', riskScore: 54, isFraud: false }
+    { id: 'A10294', label: 'C10294 (Origin)', nodeType: 'ACCOUNT', riskLevel: 'CRITICAL', riskScore: 97, isFraud: true, isTarget: true, amount: 842000 },
+    { id: 'A88421', label: 'C88421 (Hub)', nodeType: 'ACCOUNT', riskLevel: 'HIGH', riskScore: 91, isFraud: true, amount: 72500 },
+    { id: 'A77192', label: 'C77192 (Recipient)', nodeType: 'ACCOUNT', riskLevel: 'HIGH', riskScore: 88, isFraud: true, amount: 48000 },
+    { id: 'A55192', label: 'C55192 (Mule)', nodeType: 'ACCOUNT', riskLevel: 'MEDIUM', riskScore: 76, isFraud: false, amount: 18500 },
+    { id: 'M90012', label: 'M90012 (Dest Merchant)', nodeType: 'ACCOUNT', riskLevel: 'HIGH', riskScore: 82, isFraud: true, amount: 120000 },
+    { id: 'TXN-10291', label: 'TX_10291 (Transfer)', nodeType: 'TRANSACTION', riskLevel: 'CRITICAL', riskScore: 95, isFraud: true, amount: 48000 },
+    { id: 'TXN-10292', label: 'TX_10292 (Cash Out)', nodeType: 'TRANSACTION', riskLevel: 'HIGH', riskScore: 89, isFraud: true, amount: 72500 },
+    { id: 'A33910', label: 'C33910 (Legit)', nodeType: 'ACCOUNT', riskLevel: 'LOW', riskScore: 12, isFraud: false, amount: 2500 }
   ],
   edges: [
-    { id: 'E1', source: 'A10294', target: 'A88421', relationship: 'TRANSFERRED', amount: 48000, isSuspicious: true, evidenceCategory: 'velocity' },
-    { id: 'E2', source: 'A88421', target: 'A77192', relationship: 'TRANSFERRED', amount: 72500, isSuspicious: true, evidenceCategory: 'amount' },
-    { id: 'E3', source: 'A77192', target: 'MERCH_901', relationship: 'PAYMENT', amount: 120000, isSuspicious: true, evidenceCategory: 'network' },
-    { id: 'E4', source: 'A10294', target: 'A55192', relationship: 'TRANSFERRED', amount: 18500, isSuspicious: false, evidenceCategory: 'velocity' },
-    { id: 'E5', source: 'A10294', target: 'DEV-8819', relationship: 'USED_DEVICE', isSuspicious: true, evidenceCategory: 'relationship' },
-    { id: 'E6', source: 'A88421', target: 'DEV-8819', relationship: 'SHARED_DEVICE', isSuspicious: true, evidenceCategory: 'relationship' },
-    { id: 'E7', source: 'A10294', target: 'IP-104', relationship: 'LOGGED_IP', isSuspicious: true, evidenceCategory: 'relationship' },
-    { id: 'E8', source: 'A33910', target: 'A10294', relationship: 'TRANSFERRED', amount: 2500, isSuspicious: false },
-    { id: 'E9', source: 'A10294', target: 'CARD-4412', relationship: 'CARD_HOLDER', isSuspicious: false }
+    { id: 'E1', source: 'A10294', target: 'TXN-10291', relationship: 'INITIATED', amount: 48000, isSuspicious: true, evidenceCategory: 'velocity' },
+    { id: 'E2', source: 'TXN-10291', target: 'A88421', relationship: 'TRANSFER_TO', amount: 48000, isSuspicious: true, evidenceCategory: 'amount' },
+    { id: 'E3', source: 'A88421', target: 'TXN-10292', relationship: 'INITIATED', amount: 72500, isSuspicious: true, evidenceCategory: 'network' },
+    { id: 'E4', source: 'TXN-10292', target: 'M90012', relationship: 'PAYMENT_TO', amount: 72500, isSuspicious: true, evidenceCategory: 'velocity' },
+    { id: 'E5', source: 'A10294', target: 'A55192', relationship: 'TRANSFERRED', amount: 18500, isSuspicious: false, evidenceCategory: 'relationship' },
+    { id: 'E6', source: 'A33910', target: 'A10294', relationship: 'TRANSFERRED', amount: 2500, isSuspicious: false }
   ]
 };
 
@@ -174,9 +171,9 @@ export const mockTransactions: Transaction[] = [
   {
     id: 'TXN-10291',
     senderId: 'A10294',
-    senderName: 'Account A10294',
+    senderName: 'Account C10294',
     receiverId: 'A88421',
-    receiverName: 'Account A88421',
+    receiverName: 'Account C88421',
     amount: 48000,
     type: 'TRANSFER',
     timestamp: '2026-08-26 21:12:04',
@@ -184,38 +181,32 @@ export const mockTransactions: Transaction[] = [
     riskScore: 97,
     riskLevel: 'CRITICAL',
     status: 'NEW',
-    location: 'Mumbai, IN',
-    ipAddress: '192.168.1.104',
-    deviceId: 'DEV-8819',
     evidenceSummary: {
       mlScore: 0.974,
-      behavioralFlags: ['Velocity Spike', 'Rapid Drain'],
-      graphFlags: ['High Risk Ring FR-0041', 'Device Reuse']
+      behavioralFlags: ['Velocity Spike', 'Rapid Balance Drain'],
+      graphFlags: ['High Risk Account Cluster FR-0041', 'Counterparty Fan-Out']
     }
   },
   {
     id: 'TXN-10292',
     senderId: 'A88421',
-    senderName: 'Account A88421',
+    senderName: 'Account C88421',
     receiverId: 'A77192',
-    receiverName: 'Account A77192',
+    receiverName: 'Account C77192',
     amount: 72500,
     type: 'TRANSFER',
     timestamp: '2026-08-26 21:13:12',
     fraudProbability: 91.2,
     riskScore: 91,
     riskLevel: 'HIGH',
-    status: 'INVESTIGATING',
-    location: 'Delhi, IN',
-    ipAddress: '192.168.1.104',
-    deviceId: 'DEV-8819'
+    status: 'INVESTIGATING'
   },
   {
     id: 'TXN-10293',
     senderId: 'A77192',
-    senderName: 'Account A77192',
-    receiverId: 'MERCH_901',
-    receiverName: 'PayMerchant X',
+    senderName: 'Account C77192',
+    receiverId: 'M90012',
+    receiverName: 'Account M90012',
     amount: 120000,
     type: 'PAYMENT',
     timestamp: '2026-08-26 21:14:40',
@@ -227,9 +218,9 @@ export const mockTransactions: Transaction[] = [
   {
     id: 'TXN-10294',
     senderId: 'A10294',
-    senderName: 'Account A10294',
+    senderName: 'Account C10294',
     receiverId: 'A55192',
-    receiverName: 'Account A55192',
+    receiverName: 'Account C55192',
     amount: 18500,
     type: 'TRANSFER',
     timestamp: '2026-08-26 21:05:10',
@@ -241,11 +232,11 @@ export const mockTransactions: Transaction[] = [
   {
     id: 'TXN-10295',
     senderId: 'A33910',
-    senderName: 'Account A33910',
+    senderName: 'Account C33910',
     receiverId: 'A10294',
-    receiverName: 'Account A10294',
+    receiverName: 'Account C10294',
     amount: 2500,
-    type: 'DEPOSIT',
+    type: 'CASH_IN',
     timestamp: '2026-08-26 20:45:00',
     fraudProbability: 12.1,
     riskScore: 12,
@@ -332,7 +323,7 @@ export const mockAlerts: Alert[] = [
     id: 'AL-1842',
     riskLevel: 'CRITICAL',
     entityId: 'A10294',
-    entityType: 'BANK_ACCOUNT',
+    entityType: 'ACCOUNT',
     reason: 'Suspicious network cluster (FR-0041 connection)',
     createdAt: '2 minutes ago',
     status: 'INVESTIGATING',
@@ -342,7 +333,7 @@ export const mockAlerts: Alert[] = [
     id: 'AL-1841',
     riskLevel: 'HIGH',
     entityId: 'A88421',
-    entityType: 'BANK_ACCOUNT',
+    entityType: 'ACCOUNT',
     reason: 'High transaction velocity & volume deviation',
     createdAt: '14 minutes ago',
     status: 'NEW',
@@ -351,19 +342,19 @@ export const mockAlerts: Alert[] = [
   {
     id: 'AL-1840',
     riskLevel: 'HIGH',
-    entityId: 'DEV-8819',
-    entityType: 'DEVICE',
-    reason: 'Multi-account fingerprint anomaly (11 accounts)',
+    entityId: 'A77192',
+    entityType: 'ACCOUNT',
+    reason: 'Multi-account counterparty anomaly',
     createdAt: '35 minutes ago',
     status: 'INVESTIGATING',
-    riskScore: 95
+    riskScore: 88
   },
   {
     id: 'AL-1839',
     riskLevel: 'MEDIUM',
     entityId: 'A55192',
-    entityType: 'BANK_ACCOUNT',
-    reason: 'Rapid succession micropayments',
+    entityType: 'ACCOUNT',
+    reason: 'Rapid succession transfer payments',
     createdAt: '1 hour ago',
     status: 'REVIEWED',
     riskScore: 76
@@ -374,8 +365,8 @@ export const mockEntities: Entity[] = [
   mockTargetEntity,
   {
     id: 'A88421',
-    name: 'Account A88421',
-    type: 'BANK_ACCOUNT',
+    name: 'Account C88421',
+    type: 'ACCOUNT',
     riskScore: 91,
     fraudProbability: 91.2,
     riskLevel: 'HIGH',
@@ -385,12 +376,12 @@ export const mockEntities: Entity[] = [
     status: 'INVESTIGATING',
     createdAt: '2026-08-05',
     lastActive: '14 mins ago',
-    riskFactors: ['High transaction velocity', 'Shared IP address']
+    riskFactors: ['High transaction velocity', 'Rapid balance zeroing']
   },
   {
     id: 'A77192',
-    name: 'Account A77192',
-    type: 'BANK_ACCOUNT',
+    name: 'Account C77192',
+    type: 'ACCOUNT',
     riskScore: 88,
     fraudProbability: 88.0,
     riskLevel: 'HIGH',
@@ -400,27 +391,12 @@ export const mockEntities: Entity[] = [
     status: 'INVESTIGATING',
     createdAt: '2026-08-10',
     lastActive: '42 mins ago',
-    riskFactors: ['High-risk merchant payments']
+    riskFactors: ['High-risk transfer outflow']
   },
   {
-    id: 'DEV-8819',
-    name: 'Device iPhone 15',
-    type: 'DEVICE',
-    riskScore: 95,
-    fraudProbability: 95.1,
-    riskLevel: 'CRITICAL',
-    transactionCount: 240,
-    totalVolume: 1890000,
-    connectedEntitiesCount: 11,
-    status: 'NEW',
-    createdAt: '2026-08-12',
-    lastActive: 'Just now',
-    riskFactors: ['Multi-account binding', 'Jailbroken device flag']
-  },
-  {
-    id: 'MERCH_901',
-    name: 'PayMerchant X',
-    type: 'MERCHANT',
+    id: 'M90012',
+    name: 'Account M90012 (Merchant Dest)',
+    type: 'ACCOUNT',
     riskScore: 82,
     fraudProbability: 82.4,
     riskLevel: 'HIGH',
@@ -430,9 +406,10 @@ export const mockEntities: Entity[] = [
     status: 'REVIEWED',
     createdAt: '2026-07-15',
     lastActive: '5 mins ago',
-    riskFactors: ['Abnormal refund rate', 'High dispute ratio']
+    riskFactors: ['Abnormal inflow velocity', 'High dispute ratio']
   }
 ];
+
 
 export const mockModelMetrics: ModelMetrics = {
   name: 'FraudGraph Hybrid (GNN + XGBoost)',

@@ -17,8 +17,7 @@ class RiskEvaluationRequest(BaseModel):
     nameDest: str = "C2000000"
     oldbalanceDest: float = 0.0
     newbalanceDest: float = 1000.0
-    device_id: Optional[str] = "DEV_TEST"
-    ip_address: Optional[str] = "192.168.1.1"
+
 
 @router.get("/{transaction_id}")
 async def get_risk_score(transaction_id: str):

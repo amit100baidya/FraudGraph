@@ -120,12 +120,13 @@ export const TransactionDrawer: React.FC<TransactionDrawerProps> = ({
             </div>
           </div>
 
-          {/* Network Details */}
+          {/* PaySim Account Network Details */}
           <div style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '4px', borderTop: '1px solid var(--border-color)', paddingTop: '0.75rem' }}>
-            {transaction.ipAddress && <div>IP Address: <strong style={{ color: 'var(--text-primary)' }}>{transaction.ipAddress}</strong></div>}
-            {transaction.deviceId && <div>Device Fingerprint: <strong style={{ color: 'var(--text-primary)' }}>{transaction.deviceId}</strong></div>}
-            {transaction.location && <div>Location Geo: <strong style={{ color: 'var(--text-primary)' }}>{transaction.location}</strong></div>}
+            <div>Source Account: <strong style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>{transaction.senderId}</strong></div>
+            <div>Destination Account: <strong style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>{transaction.receiverId}</strong></div>
+            <div>PaySim Step (Hour): <strong style={{ color: 'var(--text-primary)' }}>{transaction.timestamp}</strong></div>
           </div>
+
 
         </div>
 

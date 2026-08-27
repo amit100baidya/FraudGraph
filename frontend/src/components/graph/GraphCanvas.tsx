@@ -102,13 +102,12 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
             'text-valign': 'bottom',
             'text-margin-y': 4,
             'background-color': (node: any) => {
+
               const isFraud = node.data('is_fraud');
               const type = node.data('node_type');
-              if (isFraud) return '#DC2626'; // Restrained Red
-              if (type === 'MERCHANT') return '#7C3AED';
-              if (type === 'DEVICE') return '#059669';
-              if (type === 'IP') return '#D97706';
-              return '#2563EB'; // Professional Blue
+              if (isFraud) return '#DC2626'; // Restrained Red (Fraud)
+              if (type === 'TRANSACTION') return '#7C3AED'; // Purple (Transaction)
+              return '#2563EB'; // Blue (Account)
             },
             width: (node: any) => (node.data('is_target') ? 32 : 24),
             height: (node: any) => (node.data('is_target') ? 32 : 24),
@@ -243,7 +242,6 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
 
   return (
     <div className="fintech-card graph-canvas-container" style={{ height, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
-
       {/* Graph Filter & Action Toolbar */}
       <GraphToolbar
         layoutName={layoutName}
@@ -279,19 +277,17 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
           boxShadow: 'var(--shadow-sm)'
         }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#2563EB' }} /> Normal
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#2563EB' }} /> Account (Normal)
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#DC2626' }} /> Fraud
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#DC2626' }} /> Account (Fraud)
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#059669' }} /> Device
-          </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#D97706' }} /> IP
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#7C3AED' }} /> Transaction
           </span>
         </div>
       </div>
     </div>
   );
 };
+
