@@ -31,9 +31,9 @@ export const InvestigationWorkspace: React.FC<InvestigationWorkspaceProps> = ({ 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
       {/* Workspace Top Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
             <h1 className="page-title">Investigation Workspace</h1>
             <StatusBadge type="risk" value={entity.riskLevel} size="md" />
             <StatusBadge type="status" value={entity.status} size="md" />
@@ -63,8 +63,9 @@ export const InvestigationWorkspace: React.FC<InvestigationWorkspaceProps> = ({ 
         )}
       </div>
 
-      {/* 3-Column Desktop Grid Layout */}
-      <div style={{ display: 'grid', gridTemplateColumns: '270px 1fr 340px', gap: '1rem', alignItems: 'start' }}>
+      {/* 3-Column Desktop Grid Layout / 1-Column Mobile Layout */}
+      <div className="investigation-grid" style={{ display: 'grid', gridTemplateColumns: '270px 1fr 340px', gap: '1rem', alignItems: 'start' }}>
+
         
         {/* COLUMN 1: LEFT — ENTITY PROFILE */}
         <div className="fintech-card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>

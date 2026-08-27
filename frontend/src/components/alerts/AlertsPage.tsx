@@ -25,7 +25,7 @@ export const AlertsPage: React.FC<AlertsPageProps> = ({ onSelectEntity }) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
         <div>
           <h1 className="page-title">Threat & Risk Alerts Queue</h1>
           <p className="page-subtitle">
@@ -34,6 +34,7 @@ export const AlertsPage: React.FC<AlertsPageProps> = ({ onSelectEntity }) => {
         </div>
 
         <div style={{ display: 'flex', gap: '0.75rem' }}>
+
           <select
             className="input-field"
             value={riskFilter}

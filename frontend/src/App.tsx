@@ -20,6 +20,7 @@ export const App: React.FC = () => {
   const [health, setHealth] = useState<{ status: string; service: string; version: string } | null>(null);
   const [analytics, setAnalytics] = useState<OverviewAnalytics>(mockOverviewAnalytics);
   const [selectedEntityId, setSelectedEntityId] = useState<string>('A10294');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   useEffect(() => {
     // Check health & fetch overview telemetry
@@ -45,6 +46,21 @@ export const App: React.FC = () => {
         apiConnected={Boolean(health)}
       />
 
+      {/* Mobile Drawer Navigation Overlay */}
+      {isMobileMenuOpen && (
+        <div className="mobile-drawer-overlay" onClick={() => setIsMobileMenuOpen(false)}>
+          <div className="mobile-drawer-content" onClick={(e) => e.stopPropagation()}>
+            <Sidebar
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              apiConnected={Boolean(health)}
+              onCloseMobile={() => setIsMobileMenuOpen(false)}
+              className="sidebar-mobile"
+            />
+          </div>
+        </div>
+      )}
+
       {/* Main Viewport Workspace */}
       <div className="main-wrapper">
         {/* Top Navigation Bar (60px) */}
@@ -52,6 +68,7 @@ export const App: React.FC = () => {
           activeTab={activeTab}
           onSelectEntity={handleSelectEntity}
           onSelectTransaction={handleSelectTransaction}
+          onToggleMobileMenu={() => setIsMobileMenuOpen(prev => !prev)}
         />
 
         {/* Dynamic Content Viewport */}
@@ -126,3 +143,4 @@ export const App: React.FC = () => {
 };
 
 export default App;
+

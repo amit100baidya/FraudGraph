@@ -1,28 +1,34 @@
 import React, { useState } from 'react';
-import { Search, Bell, Calendar, ChevronRight, UserCheck } from 'lucide-react';
+import { Search, Bell, Calendar, ChevronRight, UserCheck, Menu } from 'lucide-react';
 import { mockTransactions, mockEntities } from '../../mock/mockData';
 
 interface TopBarProps {
   activeTab: string;
   onSelectEntity?: (entityId: string) => void;
   onSelectTransaction?: (txId: string) => void;
+  onToggleMobileMenu?: () => void;
 }
 
-export const TopBar: React.FC<TopBarProps> = ({ activeTab, onSelectEntity, onSelectTransaction }) => {
+export const TopBar: React.FC<TopBarProps> = ({
+  activeTab,
+  onSelectEntity,
+  onSelectTransaction,
+  onToggleMobileMenu
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const getBreadcrumb = () => {
     switch (activeTab) {
       case 'overview': return 'Overview / Real-Time Fraud Intelligence';
-      case 'investigations': return 'Investigations / Case #INV-1842 (Account A10294)';
-      case 'graph': return 'Transaction Network / Heterogeneous Entity Neighborhood';
-      case 'rings': return 'Fraud Rings / Network Communities Discovery';
-      case 'transactions': return 'Transactions / Transaction Explorer & Ledger';
-      case 'entities': return 'Entities / Account & Identity Intelligence';
-      case 'alerts': return 'Alerts / Active Threat & Risk Queue';
-      case 'analytics': return 'Model Analytics / Model Ablation & Performance';
-      case 'settings': return 'Settings / Engine Configuration';
+      case 'investigations': return 'Investigations / Case #INV-1842';
+      case 'graph': return 'Transaction Network / Entity Neighborhood';
+      case 'rings': return 'Fraud Rings / Network Communities';
+      case 'transactions': return 'Transactions / Transaction Explorer';
+      case 'entities': return 'Entities / Account Intelligence';
+      case 'alerts': return 'Alerts / Active Risk Queue';
+      case 'analytics': return 'Model Analytics / Model Ablation';
+      case 'settings': return 'Settings / Engine Config';
       default: return 'Overview / Dashboard';
     }
   };
@@ -40,15 +46,28 @@ export const TopBar: React.FC<TopBarProps> = ({ activeTab, onSelectEntity, onSel
 
   return (
     <header className="topbar-container">
-      {/* Left: Breadcrumb */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '13px', color: 'var(--text-muted)' }}>
-        <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>FraudGraph</span>
-        <ChevronRight size={14} />
-        <span style={{ color: 'var(--text-secondary)' }}>{getBreadcrumb()}</span>
+      {/* Left: Mobile Menu Toggle & Breadcrumb */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+        {onToggleMobileMenu && (
+          <button
+            className="btn-icon menu-toggle-btn"
+            onClick={onToggleMobileMenu}
+            title="Open Menu"
+            style={{ width: '36px', height: '36px' }}
+          >
+            <Menu size={18} />
+          </button>
+        )}
+
+        <div className="topbar-breadcrumb" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '13px', color: 'var(--text-muted)' }}>
+          <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>FraudGraph</span>
+          <ChevronRight size={14} />
+          <span style={{ color: 'var(--text-secondary)' }}>{getBreadcrumb()}</span>
+        </div>
       </div>
 
       {/* Center: Global Search Bar */}
-      <div style={{ position: 'relative', width: '380px' }}>
+      <div className="topbar-search-container" style={{ position: 'relative', width: '380px' }}>
         <div style={{
           display: 'flex',
           alignItems: 'center',
@@ -60,10 +79,10 @@ export const TopBar: React.FC<TopBarProps> = ({ activeTab, onSelectEntity, onSel
           boxShadow: isSearchFocused ? '0 0 0 2px rgba(37, 99, 235, 0.1)' : 'none',
           transition: 'all 150ms ease'
         }}>
-          <Search size={14} style={{ color: 'var(--text-muted)' }} />
+          <Search size={14} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
           <input
             type="text"
-            placeholder="Search transaction, account, entity..."
+            placeholder="Search account, tx..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => setIsSearchFocused(true)}
@@ -97,7 +116,7 @@ export const TopBar: React.FC<TopBarProps> = ({ activeTab, onSelectEntity, onSel
           }}>
             {!hasResults && (
               <div style={{ padding: '0.75rem', fontSize: '12px', color: 'var(--text-muted)', textAlign: 'center' }}>
-                No matching transactions or entities found for "{searchQuery}"
+                No matching transactions or entities found
               </div>
             )}
 
@@ -176,9 +195,9 @@ export const TopBar: React.FC<TopBarProps> = ({ activeTab, onSelectEntity, onSel
       </div>
 
       {/* Right Controls */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         {/* Date Selector */}
-        <div style={{
+        <div className="topbar-date" style={{
           display: 'flex',
           alignItems: 'center',
           gap: '0.4rem',
@@ -191,7 +210,7 @@ export const TopBar: React.FC<TopBarProps> = ({ activeTab, onSelectEntity, onSel
           border: '1px solid var(--border-color)'
         }}>
           <Calendar size={14} style={{ color: 'var(--text-muted)' }} />
-          <span>26 August 2026</span>
+          <span>26 Aug 2026</span>
         </div>
 
         {/* Notifications Icon */}
@@ -213,7 +232,7 @@ export const TopBar: React.FC<TopBarProps> = ({ activeTab, onSelectEntity, onSel
         </button>
 
         {/* Analyst Profile Badge */}
-        <div style={{
+        <div className="topbar-analyst-badge" style={{
           fontSize: '12px',
           fontWeight: 600,
           color: 'var(--text-primary)',
@@ -228,3 +247,4 @@ export const TopBar: React.FC<TopBarProps> = ({ activeTab, onSelectEntity, onSel
     </header>
   );
 };
+

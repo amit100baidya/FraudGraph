@@ -32,7 +32,7 @@ export const FraudRingsPage: React.FC<FraudRingsPageProps> = ({ onSelectEntity }
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
         <div>
           <h1 className="page-title">Fraud Rings & Network Communities</h1>
           <p className="page-subtitle">
@@ -40,8 +40,9 @@ export const FraudRingsPage: React.FC<FraudRingsPageProps> = ({ onSelectEntity }
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
-          <div style={{ position: 'relative', width: '260px' }}>
+        <div style={{ display: 'flex', gap: '0.75rem', width: '100%', maxWidth: '260px' }}>
+          <div style={{ position: 'relative', width: '100%' }}>
+
             <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
             <input
               type="text"

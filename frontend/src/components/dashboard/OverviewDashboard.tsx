@@ -68,18 +68,18 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
       </div>
 
       {/* Main Grid: Risk Activity Chart (Left 1.4fr) + Priority Investigations Queue (Right 1fr) */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '1.25rem', alignItems: 'start' }}>
+      <div className="overview-grid" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '1.25rem', alignItems: 'start' }}>
         
         {/* Risk Activity Chart */}
         <div className="fintech-card" style={{ padding: '1.25rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
             <div>
               <h3 className="section-title">Risk Activity</h3>
               <p className="meta-text">24-hour transaction risk category distribution</p>
             </div>
             
             {/* Chart Legend */}
-            <div style={{ display: 'flex', gap: '1rem', fontSize: '11px', fontWeight: 500 }}>
+            <div style={{ display: 'flex', gap: '0.75rem', fontSize: '11px', fontWeight: 500, flexWrap: 'wrap' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <span style={{ width: '8px', height: '8px', borderRadius: '2px', background: '#94A3B8' }} />
                 <span>Legitimate</span>
@@ -96,7 +96,8 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
           </div>
 
           {/* Bar Chart Visualization */}
-          <div style={{ height: '240px', position: 'relative', display: 'flex', alignItems: 'flex-end', gap: '12px', paddingTop: '20px', paddingBottom: '24px' }}>
+          <div style={{ height: '240px', position: 'relative', display: 'flex', alignItems: 'flex-end', gap: '12px', paddingTop: '20px', paddingBottom: '24px', overflowX: 'auto' }}>
+
             {analytics.riskActivitySeries.map((pt, idx) => {
               const total = pt.legitimateCount + pt.suspiciousCount + pt.confirmedFraudCount;
               const heightPct = (total / maxTotal) * 100;

@@ -22,7 +22,7 @@ export const EntitiesPage: React.FC<EntitiesPageProps> = ({ onSelectEntity }) =>
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
         <div>
           <h1 className="page-title">Entity Explorer</h1>
           <p className="page-subtitle">
@@ -30,7 +30,8 @@ export const EntitiesPage: React.FC<EntitiesPageProps> = ({ onSelectEntity }) =>
           </p>
         </div>
 
-        <div style={{ position: 'relative', width: '280px' }}>
+        <div style={{ position: 'relative', width: '100%', maxWidth: '280px' }}>
+
           <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           <input
             type="text"

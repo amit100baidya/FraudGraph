@@ -242,7 +242,8 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
   };
 
   return (
-    <div className="fintech-card" style={{ height, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+    <div className="fintech-card graph-canvas-container" style={{ height, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+
       {/* Graph Filter & Action Toolbar */}
       <GraphToolbar
         layoutName={layoutName}

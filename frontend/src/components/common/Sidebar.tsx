@@ -9,16 +9,25 @@ import {
   Bell, 
   BarChart3, 
   Settings,
-  FileText
+  FileText,
+  X
 } from 'lucide-react';
 
 interface SidebarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   apiConnected?: boolean;
+  onCloseMobile?: () => void;
+  className?: string;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, apiConnected = true }) => {
+export const Sidebar: React.FC<SidebarProps> = ({
+  activeTab,
+  setActiveTab,
+  apiConnected = true,
+  onCloseMobile,
+  className = "sidebar-desktop"
+}) => {
   const navItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'investigations', label: 'Investigations', icon: FileText },
@@ -31,10 +40,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, apiCo
     { id: 'settings', label: 'Settings', icon: Settings }
   ];
 
+  const handleTabClick = (tabId: string) => {
+    setActiveTab(tabId);
+    if (onCloseMobile) {
+      onCloseMobile();
+    }
+  };
+
   return (
-    <aside className="sidebar-desktop">
+    <aside className={className}>
       {/* Brand Header */}
-      <div style={{ padding: '1.25rem 1.25rem 1rem', borderBottom: '1px solid var(--border-color)' }}>
+      <div style={{ padding: '1.25rem 1.25rem 1rem', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
           <div style={{
             width: '32px',
@@ -57,6 +73,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, apiCo
             </div>
           </div>
         </div>
+
+        {onCloseMobile && (
+          <button
+            className="btn-icon"
+            onClick={onCloseMobile}
+            title="Close navigation"
+            style={{ width: '28px', height: '28px' }}
+          >
+            <X size={16} />
+          </button>
+        )}
       </div>
 
       {/* Main Navigation */}
@@ -70,13 +97,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, apiCo
           return (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id)}
+              onClick={() => handleTabClick(item.id)}
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 width: '100%',
-                padding: '0.55rem 0.75rem',
+                padding: '0.65rem 0.75rem',
                 margin: '2px 0',
                 borderRadius: '6px',
                 border: 'none',
@@ -154,3 +181,4 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, apiCo
     </aside>
   );
 };
+
